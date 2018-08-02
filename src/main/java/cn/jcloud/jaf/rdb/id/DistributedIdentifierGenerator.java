@@ -28,7 +28,7 @@ import java.util.Properties;
  * 在同一个{COUNTER_EXPIRE_TIME}时间窗口内，则会引起主键重复。同时又不宜设置过小，会导致频繁的读写redis。
  * 这里主要考虑的是一个{PER_TIME}时间窗口内，redis宕掉之后也无法恢复。
  * 实现参考：http://www.oschina.net/code/snippet_147955_25122
- * Created by closer on 2016/2/2.
+ * Created by Wei Han on 2016/2/2.
  *
  * @since 1.0
  */
@@ -149,10 +149,5 @@ public class DistributedIdentifierGenerator implements IdentifierGenerator, Conf
 
     private static long timeGen() {
         return System.currentTimeMillis() / 1000;
-    }
-
-    public static void main(String[] args) throws ClassNotFoundException {
-        Class c = Class.forName("xxx");
-        System.out.println(c == null);
     }
 }

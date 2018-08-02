@@ -7,22 +7,23 @@
     <name>jaf-rdb-mysql</name>
     <groupId>cn.jcloud.jaf</groupId>
     <artifactId>jaf-rdb-mysql</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.2.0-SNAPSHOT</version>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.data.jpa.version>1.9.2.RELEASE</spring.data.jpa.version>
         <hibernate-validator.version>5.0.2.Final</hibernate-validator.version>
         <hibernate.data.version>4.3.6.Final</hibernate.data.version>
-        <jackson.version>2.6.5</jackson.version>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
+        <jackson.version>2.8.1</jackson.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>cn.jcloud.jaf</groupId>
-            <artifactId>jaf-common</artifactId>
+            <artifactId>jaf-common2</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
         <!--hibernate data-->
@@ -106,5 +107,18 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>java-releases</id>
+            <name>j-cloud releases nexus mirror.</name>
+            <url>http://10.1.0.29:8081/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>java-snapshots</id>
+            <name>j-cloud snapshots nexus mirror.</name>
+            <url>http://10.1.0.29:8081/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>

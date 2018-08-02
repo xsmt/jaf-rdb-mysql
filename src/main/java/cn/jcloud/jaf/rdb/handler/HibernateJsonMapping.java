@@ -6,7 +6,7 @@ import org.hibernate.type.Type;
 
 /**
  * Hibernate Json序列化时,Prox类型的id字段名映射
- * Created by wei Han on 2016/2/23.
+ * Created by Wei Han on 2016/2/23.
  */
 public class HibernateJsonMapping implements Mapping {
     @Override

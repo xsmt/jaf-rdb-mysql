@@ -4,7 +4,7 @@ import org.hibernate.dialect.MySQL5InnoDBDialect;
 
 /**
  * hibernate方言，支持utf8mb4
- * Created by Zhang Jinlong(150429) on 2016/5/6.
+ * Created by Wei Han on 2016/5/6.
  */
 public class Utf8mb4MySQL5InnoDBDialect extends MySQL5InnoDBDialect {
     @Override

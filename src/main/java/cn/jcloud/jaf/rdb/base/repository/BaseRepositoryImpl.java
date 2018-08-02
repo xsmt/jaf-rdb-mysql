@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 /**
  * Dao基础实现
- * Created by wei Han on 2016/1/19.
+ * Created by Wei Han on 2016/1/19.
  */
 public class BaseRepositoryImpl<T extends BaseDomain<I>, I extends Serializable> extends SimpleJpaRepository<T, I>
         implements BaseRepository<T, I> {

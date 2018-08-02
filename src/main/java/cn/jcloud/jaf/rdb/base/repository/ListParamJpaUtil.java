@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * 与ListParam相关的Jpa查询工具类
- * Created by wei Han on 2016/2/17.
+ * Created by Wei Han on 2016/2/17.
  */
 public class ListParamJpaUtil {
 
