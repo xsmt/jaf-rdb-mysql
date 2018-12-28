@@ -23,8 +23,8 @@
     <dependencies>
         <dependency>
             <groupId>cn.jcloud.jaf</groupId>
-            <artifactId>jaf-common2</artifactId>
-            <version>0.1.0-SNAPSHOT</version>
+            <artifactId>jaf-common</artifactId>
+            <version>0.2.0-SNAPSHOT</version>
         </dependency>
         <!--hibernate data-->
         <dependency>
@@ -112,13 +112,23 @@
         <repository>
             <id>java-releases</id>
             <name>j-cloud releases nexus mirror.</name>
-            <url>http://10.1.0.29:8081/repository/maven-releases/</url>
+            <url>http://117.50.29.14:8081/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>java-snapshots</id>
             <name>j-cloud snapshots nexus mirror.</name>
-            <url>http://10.1.0.29:8081/repository/maven-snapshots/</url>
+            <url>http://117.50.29.14:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
+    <repositories>
+        <repository>
+            <id>nexus-junma</id>
+            <name>nexus junma</name>
+            <url>http://117.50.29.14:8081/repository/maven-public/</url>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 </project>
