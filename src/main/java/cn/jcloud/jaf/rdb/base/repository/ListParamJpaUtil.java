@@ -1,21 +1,16 @@
 package cn.jcloud.jaf.rdb.base.repository;
 
-import cn.jcloud.jaf.common.base.domain.BaseDomain;
 import cn.jcloud.jaf.common.constant.ErrorCode;
 import cn.jcloud.jaf.common.exception.JafI18NException;
 import cn.jcloud.jaf.common.query.Condition;
 import cn.jcloud.jaf.common.query.Items;
 import cn.jcloud.jaf.common.query.ListParam;
-import cn.jcloud.jaf.common.util.ReflectUtil;
 import org.springframework.data.domain.Sort;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * 与ListParam相关的Jpa查询工具类
@@ -105,75 +100,84 @@ public class ListParamJpaUtil {
         for (int i = 0, size = conditions.size(); i < size; i++) {
             Condition condition = conditions.get(i);
             Object value = condition.getValue();
-            Class valueType = condition.getValueType();
-            value = getRealTypeValue(value, valueType);
-            query.setParameter(condition.getField() + i, value);
+            String[] fieldArray = condition.getField().split("\\.");
+            query.setParameter(fieldArray[fieldArray.length-1] + i, value);
         }
     }
 
-    private static Object getRealTypeValue(Object value, Class valueType) {
-        if (BaseDomain.class.isAssignableFrom(valueType)) {
-            try {
-                BaseDomain domain = (BaseDomain) valueType.newInstance();
-                if (Long.class.equals(ReflectUtil.getGenericParameter(valueType)[0])) {
-                    domain.setId(Long.parseLong(String.valueOf(value)));
-                } else {
-                    domain.setId((Serializable) value);
-                }
-                return domain;
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw JafI18NException.of("无法实例类型" + valueType.getCanonicalName()
-                        + ",可能由于缺少无参构造函数", ErrorCode.INVALID_ARGUMENT, e);
-            }
-        }
-        return value;
-    }
 
     private static <T> Predicate buildPredicate(CriteriaBuilder builder, Root<T> root, Condition condition, int index) {
-        String field = condition.getField();
-        String parameterName = field + index;
+        String[] fieldArray = condition.getField().split("\\.");
         Class valueType = condition.getValueType();
         Predicate predicate;
+        int fieldIndex = 0;
+        Path path = root.get(fieldArray[fieldIndex]);
+        Class classType = path.getJavaType();
+        if (classType.equals(Set.class)) {
+            SetJoin setJoin = root.joinSet(fieldArray[fieldIndex]);
+            if (++fieldIndex >= fieldArray.length) {
+                throw JafI18NException.of(ErrorCode.INVALID_QUERY);
+            }
+            path = setJoin.get(fieldArray[fieldIndex]);
+        } else if (classType.equals(List.class)) {
+            ListJoin listJoin = root.joinList(fieldArray[fieldIndex]);
+            if (++fieldIndex >= fieldArray.length) {
+                throw JafI18NException.of(ErrorCode.INVALID_QUERY);
+            }
+            path = listJoin.get(fieldArray[fieldIndex]);
+        } else if (classType.equals(Map.class)) {
+            MapJoin mapJoin = root.joinMap(fieldArray[fieldIndex]);
+            if (++fieldIndex >= fieldArray.length) {
+                throw JafI18NException.of(ErrorCode.INVALID_QUERY);
+            }
+            path = mapJoin.get(fieldArray[fieldIndex]);
+        }
+        while (++fieldIndex < fieldArray.length) {
+            path = path.get(fieldArray[fieldIndex]);
+        }
+
+        String parameterName = fieldArray[fieldArray.length-1] + index;
+
         switch (condition.getOperator()) {
             case EQ:
                 predicate = builder.equal(
-                        root.get(field),
+                        path,
                         builder.parameter(valueType, parameterName)
                 );
                 break;
             case NE:
                 predicate = builder.notEqual(
-                        root.get(field),
+                        path,
                         builder.parameter(valueType, parameterName)
                 );
                 break;
             case GT:
                 predicate = builder.greaterThan(
-                        root.get(field).as(valueType),
+                        path.as(valueType),
                         builder.parameter(valueType, parameterName)
                 );
                 break;
             case GE:
                 predicate = builder.greaterThanOrEqualTo(
-                        root.get(field).as(valueType),
+                        path.as(valueType),
                         builder.parameter(valueType, parameterName)
                 );
                 break;
             case LT:
                 predicate = builder.lessThan(
-                        root.get(field).as(valueType),
+                        path.as(valueType),
                         builder.parameter(valueType, parameterName)
                 );
                 break;
             case LE:
                 predicate = builder.lessThanOrEqualTo(
-                        root.get(field).as(valueType),
+                        path.as(valueType),
                         builder.parameter(valueType, parameterName)
                 );
                 break;
             case LIKE:
                 predicate = builder.like(
-                        root.get(field).as(String.class),
+                        path.as(String.class),
                         builder.parameter(String.class, parameterName)
                 );
                 break;
