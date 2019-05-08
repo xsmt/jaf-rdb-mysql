@@ -50,11 +50,16 @@ public class ListParamJpaUtil {
         CriteriaQuery<Long> criteriaQuery = builder
                 .createQuery(Long.class);
         Root<T> root = criteriaQuery.from(domainType);
-        criteriaQuery.select(builder.count(root));
 
         //设置查询条件
         List<Condition> conditions = listParam.getConditions();
         buildPredicates(builder, criteriaQuery, root, conditions);
+
+        if (criteriaQuery.isDistinct()) {
+            criteriaQuery.select(builder.countDistinct(root));
+        } else {
+            criteriaQuery.select(builder.count(root));
+        }
 
         //设置查询参数
         Query query = em.createQuery(criteriaQuery);
@@ -89,7 +94,7 @@ public class ListParamJpaUtil {
         List<Predicate> predicates = new ArrayList<>(conditions.size());
         for (int i = 0, size = conditions.size(); i < size; i++) {
             Condition condition = conditions.get(i);
-            predicates.add(buildPredicate(builder, root, condition, i));
+            predicates.add(buildPredicate(builder, criteriaQuery, root, condition, i));
         }
         Predicate[] predicateArr = new Predicate[predicates.size()];
         predicates.toArray(predicateArr);
@@ -106,7 +111,7 @@ public class ListParamJpaUtil {
     }
 
 
-    private static <T> Predicate buildPredicate(CriteriaBuilder builder, Root<T> root, Condition condition, int index) {
+    private static <T> Predicate buildPredicate(CriteriaBuilder builder, CriteriaQuery criteriaQuery, Root<T> root, Condition condition, int index) {
         String[] fieldArray = condition.getField().split("\\.");
         Class valueType = condition.getValueType();
         Predicate predicate;
@@ -119,18 +124,21 @@ public class ListParamJpaUtil {
                 throw JafI18NException.of(ErrorCode.INVALID_QUERY);
             }
             path = setJoin.get(fieldArray[fieldIndex]);
+            criteriaQuery.distinct(true);
         } else if (classType.equals(List.class)) {
             ListJoin listJoin = root.joinList(fieldArray[fieldIndex]);
             if (++fieldIndex >= fieldArray.length) {
                 throw JafI18NException.of(ErrorCode.INVALID_QUERY);
             }
             path = listJoin.get(fieldArray[fieldIndex]);
+            criteriaQuery.distinct(true);
         } else if (classType.equals(Map.class)) {
             MapJoin mapJoin = root.joinMap(fieldArray[fieldIndex]);
             if (++fieldIndex >= fieldArray.length) {
                 throw JafI18NException.of(ErrorCode.INVALID_QUERY);
             }
             path = mapJoin.get(fieldArray[fieldIndex]);
+            criteriaQuery.distinct(true);
         }
         while (++fieldIndex < fieldArray.length) {
             path = path.get(fieldArray[fieldIndex]);

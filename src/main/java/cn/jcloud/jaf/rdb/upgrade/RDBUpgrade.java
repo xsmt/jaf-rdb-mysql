@@ -85,7 +85,7 @@ public class RDBUpgrade {
         } catch (IOException e) {
             throw JafI18NException.of("unable to read upgrade file [" + dbVersion.getScriptFile().getName() + "]");
         }
-        String[] sqlArr = scriptFileContent.split(";");
+        String[] sqlArr = scriptFileContent.split(";;");
         if (dbVersion.isMultiTenancy()) {
             executeMultiTenancyScript(dbVersion, sqlArr);
         } else {
