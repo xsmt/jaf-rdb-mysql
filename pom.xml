@@ -112,12 +112,12 @@
         <repository>
             <id>java-releases</id>
             <name>j-cloud releases nexus mirror.</name>
-            <url>http://117.50.29.14:8081/repository/maven-releases/</url>
+            <url>http://47.103.102.165:8081/repository/maven-releases/</url>
         </repository>
         <snapshotRepository>
             <id>java-snapshots</id>
             <name>j-cloud snapshots nexus mirror.</name>
-            <url>http://117.50.29.14:8081/repository/maven-snapshots/</url>
+            <url>http://47.103.102.165:8081/repository/maven-snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -125,7 +125,7 @@
         <repository>
             <id>nexus-junma</id>
             <name>nexus junma</name>
-            <url>http://117.50.29.14:8081/repository/maven-public/</url>
+            <url>http://47.103.102.165:8081/repository/maven-public/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>

@@ -74,10 +74,16 @@ public class ListParamJpaUtil {
         List<Order> orders = new LinkedList<>();
         for (Sort.Order sortOrder : sort) {
             Order order;
+            String[] fieldArray = sortOrder.getProperty().split("\\.");
+            int fieldIndex = 0;
+            Path path = root.get(fieldArray[fieldIndex]);
+            while (++fieldIndex < fieldArray.length) {
+                path = path.get(fieldArray[fieldIndex]);
+            }
             if (Sort.Direction.ASC.equals(sortOrder.getDirection())) {
-                order = builder.asc(root.get(sortOrder.getProperty()));
+                order = builder.asc(path);
             } else {
-                order = builder.desc(root.get(sortOrder.getProperty()));
+                order = builder.desc(path);
             }
             orders.add(order);
         }
