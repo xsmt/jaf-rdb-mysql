@@ -5,6 +5,7 @@ import cn.jcloud.jaf.common.exception.JafI18NException;
 import cn.jcloud.jaf.common.query.Condition;
 import cn.jcloud.jaf.common.query.Items;
 import cn.jcloud.jaf.common.query.ListParam;
+import cn.jcloud.jaf.common.query.Operator;
 import org.springframework.data.domain.Sort;
 
 import javax.persistence.EntityManager;
@@ -109,6 +110,9 @@ public class ListParamJpaUtil {
 
     public static void buildParameter(List<Condition> conditions, Query query) {
         for (int i = 0, size = conditions.size(); i < size; i++) {
+            if (Operator.IN.equals(conditions.get(i).getOperator())) {
+                continue;
+            }
             Condition condition = conditions.get(i);
             Object value = condition.getValue();
             String[] fieldArray = condition.getField().split("\\.");
@@ -194,6 +198,20 @@ public class ListParamJpaUtil {
                         path.as(String.class),
                         builder.parameter(String.class, parameterName)
                 );
+                break;
+            case UNLIKE:
+                predicate = builder.notLike(
+                        path.as(String.class),
+                        builder.parameter(String.class, parameterName)
+                );
+                break;
+            case IN:
+                CriteriaBuilder.In<Object> in = builder.in(path);
+                List<Object> inValues = (List<Object>) condition.getValue();
+                for(Object object: inValues) {
+                    in.value(object);
+                }
+                predicate = builder.and(in);
                 break;
             default:
                 throw JafI18NException.of("非法或不支持的操作符", ErrorCode.INVALID_QUERY);
