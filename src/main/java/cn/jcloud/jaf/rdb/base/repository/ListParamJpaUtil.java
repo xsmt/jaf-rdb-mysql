@@ -129,21 +129,51 @@ public class ListParamJpaUtil {
         Path path = root.get(fieldArray[fieldIndex]);
         Class classType = path.getJavaType();
         if (classType.equals(Set.class)) {
-            SetJoin setJoin = root.joinSet(fieldArray[fieldIndex]);
+            Set<Join<T,?>> joinSet = root.getJoins();
+            SetJoin setJoin = null;
+            for (Join<T,?> join : joinSet) {
+                if (join.getAttribute().getName().equals(fieldArray[fieldIndex])) {
+                    setJoin = (SetJoin)join;
+                    break;
+                }
+            }
+            if (setJoin == null ) {
+                setJoin = root.joinSet(fieldArray[fieldIndex]);
+            }
             if (++fieldIndex >= fieldArray.length) {
                 throw JafI18NException.of(ErrorCode.INVALID_QUERY);
             }
             path = setJoin.get(fieldArray[fieldIndex]);
             criteriaQuery.distinct(true);
         } else if (classType.equals(List.class)) {
-            ListJoin listJoin = root.joinList(fieldArray[fieldIndex]);
+            Set<Join<T,?>> joinSet = root.getJoins();
+            ListJoin listJoin = null;
+            for (Join<T,?> join : joinSet) {
+                if (join.getAttribute().getName().equals(fieldArray[fieldIndex])) {
+                    listJoin = (ListJoin)join;
+                    break;
+                }
+            }
+            if (listJoin == null ) {
+                listJoin = root.joinList(fieldArray[fieldIndex]);
+            }
             if (++fieldIndex >= fieldArray.length) {
                 throw JafI18NException.of(ErrorCode.INVALID_QUERY);
             }
             path = listJoin.get(fieldArray[fieldIndex]);
             criteriaQuery.distinct(true);
         } else if (classType.equals(Map.class)) {
-            MapJoin mapJoin = root.joinMap(fieldArray[fieldIndex]);
+            Set<Join<T,?>> joinSet = root.getJoins();
+            MapJoin mapJoin = null;
+            for (Join<T,?> join : joinSet) {
+                if (join.getAttribute().getName().equals(fieldArray[fieldIndex])) {
+                    mapJoin = (MapJoin)join;
+                    break;
+                }
+            }
+            if (mapJoin == null ) {
+                mapJoin = root.joinMap(fieldArray[fieldIndex]);
+            }
             if (++fieldIndex >= fieldArray.length) {
                 throw JafI18NException.of(ErrorCode.INVALID_QUERY);
             }
