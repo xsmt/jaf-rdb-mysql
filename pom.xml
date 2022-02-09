@@ -13,7 +13,7 @@
         <spring.version>4.2.4.RELEASE</spring.version>
         <spring.data.jpa.version>1.9.2.RELEASE</spring.data.jpa.version>
         <hibernate-validator.version>5.0.2.Final</hibernate-validator.version>
-        <hibernate.data.version>4.3.6.Final</hibernate.data.version>
+        <hibernate.data.version>5.4.24.Final</hibernate.data.version>
         <jackson.version>2.6.5</jackson.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
